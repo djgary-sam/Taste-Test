@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taste Test</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Karla:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:           #0f0d0b;
+            --surface:      #1a1610;
+            --card:         #211c13;
+            --border:       #36302a;
+            --cream:        #ede5d8;
+            --muted:        #7a6e62;
+            --accent:       #c4622d;
+            --accent-light: #d4733e;
+            --green:        #4a7a55;
+            --yellow:       #b08a0a;
+            --grey:         #3d342c;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--cream);
+            font-family: 'Karla', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* MODAL */
+        #modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(8,6,4,0.9);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 1.5rem;
+            overflow-y: auto;
+            animation: fadeIn 0.35s ease;
+        }
+
+        #modal {
+            background: var(--card);
+            border: 1px solid var(--border);
+            max-width: 460px;
+            width: 100%;
+            padding: 2.5rem 2.5rem 2rem;
+            margin: auto;
+        }
+
+        .modal-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            margin-bottom: 0.15rem;
+        }
+
+        .modal-sub {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .section-label {
+            font-size: 0.68rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .instruction-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .instruction-list li {
+            display: flex;
+            gap: 0.75rem;
+            font-size: 0.88rem;
+            line-height: 1.55;
+            color: var(--cream);
+        }
+
+        .step-n {
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--accent);
+            font-size: 1.05rem;
+            font-weight: 600;
+            flex-shrink: 0;
+            width: 1.1rem;
+            padding-top: 1px;
+        }
+
+        .colour-guide {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            margin-top: 0.5rem;
+        }
+
+        .colour-row {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            font-size: 0.85rem;
+        }
+
+        .mini-tile {
+            width: 22px;
+            height: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Courier Prime', monospace;
+            font-weight: 700;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+        .mini-tile.g { background: var(--green); }
+        .mini-tile.y { background: var(--yellow); }
+        .mini-tile.x { background: var(--grey); }
+
+        .hint-progression {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem 1.1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+        }
+
+        .hint-prog-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            font-size: 0.85rem;
+        }
+
+        .hint-badge {
+            font-size: 0.63rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent);
+            border: 1px solid var(--border);
+            padding: 0.15rem 0.45rem;
+            white-space: nowrap;
+            flex-shrink: 0;
+            font-weight: 600;
+            margin-top: 1px;
+        }
+
+        .hint-badge-text { color: var(--muted); line-height: 1.4; }
+
+        .footnote {
+            font-size: 0.78rem;
+            color: var(--muted);
+            line-height: 1.55;
+            border-top: 1px solid var(--border);
+            padding-top: 1.1rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .play-btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: var(--accent);
+            border: none;
+            color: var(--cream);
+            font-family: 'Karla', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.18s;
+        }
+        .play-btn:hover { background: var(--accent-light); }
+
+        /* GAME */
+        #game {
+            width: 100%;
+            max-width: 520px;
+            padding: 0 1.25rem 4rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #game-header {
+            width: 100%;
+            text-align: center;
+            padding: 2.2rem 0 1.6rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .game-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            font-weight: 600;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        .game-tagline {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-top: 0.35rem;
+        }
+
+        .attempt-label {
+            font-size: 0.68rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-top: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .attempt-pips { display: flex; gap: 7px; justify-content: center; }
+
+        .pip {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: 1.5px solid var(--muted);
+            transition: all 0.25s;
+        }
+        .pip.used    { background: var(--muted); }
+        .pip.correct { background: var(--green); border-color: var(--green); }
+
+        /* TILES */
+        #guesses-area {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin-bottom: 1.5rem;
+            min-height: 10px;
+        }
+
+        .guess-row { display: flex; justify-content: center; gap: 5px; }
+
+        .tile {
+            width: 46px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border: 2px solid var(--border);
+            background: var(--surface);
+            color: var(--cream);
+            animation: tileReveal 0.22s ease-out both;
+            user-select: none;
+        }
+        .tile.green  { background: var(--green);  border-color: var(--green);  }
+        .tile.yellow { background: var(--yellow); border-color: var(--yellow); }
+        .tile.grey   { background: var(--grey);   border-color: var(--grey);   }
+
+        /* HINTS */
+        #hints-area { width: 100%; margin-bottom: 1.5rem; }
+
+        .hint-card {
+            border: 1px solid var(--border);
+            background: var(--card);
+            padding: 1rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .hint-row {
+            display: flex;
+            gap: 0.8rem;
+            align-items: flex-start;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        .hint-key {
+            font-size: 0.63rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent);
+            font-weight: 600;
+            min-width: 52px;
+            flex-shrink: 0;
+            padding-top: 2px;
+        }
+
+        .hint-val { color: var(--cream); }
+        .hint-divider { height: 1px; background: var(--border); }
+
+        /* INPUT */
+        #input-area {
+            width: 100%;
+            display: none;
+            flex-direction: column;
+            gap: 0.55rem;
+            align-items: stretch;
+        }
+
+        .input-row { display: flex; gap: 8px; }
+
+        #guess-input {
+            flex: 1;
+            min-width: 0;
+            padding: 0.8rem 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--cream);
+            font-family: 'Courier Prime', monospace;
+            font-size: 1.05rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            outline: none;
+            transition: border-color 0.18s;
+        }
+        #guess-input:focus { border-color: var(--accent); }
+        #guess-input::placeholder {
+            color: var(--muted);
+            font-family: 'Karla', sans-serif;
+            font-size: 0.88rem;
+            letter-spacing: 0.03em;
+            text-transform: none;
+        }
+
+        #submit-btn {
+            padding: 0.8rem 1.4rem;
+            background: var(--accent);
+            border: none;
+            color: var(--cream);
+            font-family: 'Karla', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.18s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        #submit-btn:hover { background: var(--accent-light); }
+
+        #error-msg {
+            font-size: 0.8rem;
+            color: #c04040;
+            min-height: 1.1em;
+            padding-left: 0.1rem;
+        }
+
+        .bottom-btns {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 0.2rem;
+        }
+
+        #howto-btn, #giveup-btn {
+            background: none;
+            border: none;
+            font-family: 'Karla', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: color 0.18s;
+        }
+        #howto-btn  { color: var(--muted); }
+        #howto-btn:hover  { color: var(--cream); }
+        #giveup-btn { color: #7a3a2a; }
+        #giveup-btn:hover { color: #c04040; }
+
+        /* KEYBOARD */
+        #keyboard {
+            width: 100%;
+            margin-top: 1.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            align-items: center;
+        }
+        .key-row { display: flex; gap: 4px; }
+        .key {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Karla', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--cream);
+            transition: all 0.25s;
+            user-select: none;
+        }
+        .key.green  { background: var(--green);  border-color: var(--green);  }
+        .key.yellow { background: var(--yellow); border-color: var(--yellow); }
+        .key.grey   { background: var(--grey);   border-color: var(--grey);   color: var(--muted); }
+
+        /* RESULT */
+        #result-area { width: 100%; margin-top: 1.5rem; }
+
+        .result-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        .result-emoji  { font-size: 2rem; margin-bottom: 0.7rem; }
+
+        .result-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.7rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .result-sub {
+            font-size: 0.88rem;
+            color: var(--muted);
+            margin-bottom: 0.25rem;
+            line-height: 1.5;
+        }
+
+        .result-answer {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.1em;
+        }
+
+        .again-btn {
+            padding: 0.75rem 2rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--cream);
+            font-family: 'Karla', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+        .again-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn    { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes tileReveal { from { transform: scaleY(0.1); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
+        @keyframes bounce    { 0%,100% { transform: translateY(0); } 35% { transform: translateY(-12px); } 65% { transform: translateY(-5px); } }
+        @keyframes shake     { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(5px); } }
+
+        .shake-anim { animation: shake 0.4s ease-in-out !important; }
+
+        @media (max-width: 440px) {
+            .tile { width: 38px; height: 38px; font-size: 1.05rem; }
+            .guess-row { gap: 4px; }
+            .game-title { font-size: 2.4rem; letter-spacing: 0.25em; }
+            #modal { padding: 2rem 1.5rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- INSTRUCTIONS MODAL -->
+<div id="modal-overlay">
+<div id="modal">
+    <p class="modal-logo">Taste Test</p>
+    <p class="modal-sub">Can you guess the mystery dish?</p>
+
+    <p class="section-label">How to play</p>
+    <ul class="instruction-list">
+        <li>
+            <span class="step-n">1</span>
+            <span>Guess the mystery dish in <strong>up to 5 attempts</strong>. All answers are <strong>single-word dishes, exactly 5 letters long</strong>.</span>
+        </li>
+        <li>
+            <span class="step-n">2</span>
+            <span>After each guess, the letter tiles reveal how close you were:<br><br>
+                <span class="colour-guide">
+                    <span class="colour-row"><span class="mini-tile g">R</span>&ensp;<strong>Green</strong> — right letter, right position</span>
+                    <span class="colour-row"><span class="mini-tile y">A</span>&ensp;<strong>Yellow</strong> — right letter, wrong position</span>
+                    <span class="colour-row"><span class="mini-tile x">X</span>&ensp;<strong>Grey</strong> — letter not in the dish</span>
+                </span>
+            </span>
+        </li>
+        <li>
+            <span class="step-n">3</span>
+            <span>A new hint unlocks after each wrong guess:</span>
+        </li>
+    </ul>
+
+    <div class="hint-progression">
+        <div class="hint-prog-row">
+            <span class="hint-badge">Miss 1</span>
+            <span class="hint-badge-text">Dish type (Sweet / Savoury / Spicy)</span>
+        </div>
+        <div class="hint-prog-row">
+            <span class="hint-badge">Miss 2</span>
+            <span class="hint-badge-text">Country of origin</span>
+        </div>
+        <div class="hint-prog-row">
+            <span class="hint-badge">Miss 3</span>
+            <span class="hint-badge-text">Description of the dish</span>
+        </div>
+        <div class="hint-prog-row">
+            <span class="hint-badge">Miss 5</span>
+            <span class="hint-badge-text">The answer is revealed</span>
+        </div>
+    </div>
+
+    <p class="footnote">
+        ✦ All guesses must be dishes from the Taste Test game database. If a dish isn't recognised, try a different one.
+    </p>
+
+    <button class="play-btn" id="play-btn" onclick="handlePlayBtn()">Let's Eat &#8594;</button>
+</div>
+</div>
+
+<!-- GAME -->
+<div id="game">
+    <div id="game-header">
+        <h1 class="game-title">Taste Test</h1>
+        <p class="game-tagline">Guess the dish</p>
+        <p class="attempt-label">Attempts</p>
+        <div class="attempt-pips" id="attempt-pips">
+            <div class="pip" id="pip-0"></div>
+            <div class="pip" id="pip-1"></div>
+            <div class="pip" id="pip-2"></div>
+            <div class="pip" id="pip-3"></div>
+            <div class="pip" id="pip-4"></div>
+        </div>
+    </div>
+
+    <div id="guesses-area"></div>
+    <div id="hints-area"></div>
+
+    <div id="input-area">
+        <div class="input-row" id="input-row">
+            <input id="guess-input" type="text" placeholder="Type a dish name&hellip;"
+                maxlength="20" autocomplete="off" autocorrect="off"
+                autocapitalize="off" spellcheck="false" />
+            <button id="submit-btn" onclick="submitGuess()">Guess</button>
+        </div>
+        <div id="error-msg"></div>
+        <div class="bottom-btns">
+            <button id="howto-btn" onclick="openModal()">How to play</button>
+            <button id="giveup-btn" onclick="giveUp()">I give up</button>
+        </div>
+    </div>
+
+    <div id="keyboard">
+        <div class="key-row" id="kr1"></div>
+        <div class="key-row" id="kr2"></div>
+        <div class="key-row" id="kr3"></div>
+    </div>
+
+    <div id="result-area"></div>
+</div>
+
+<script>
+/* DATABASE — 100 five-letter dishes */
+const DISHES = [
+    { word:"PIZZA", country:"Italy",        type:"Savoury",         description:"Baked flatbread loaded with tomato sauce, cheese and toppings" },
+    { word:"SUSHI", country:"Japan",         type:"Savoury",         description:"Vinegared rice paired with fresh raw fish or vegetables" },
+    { word:"TACOS", country:"Mexico",        type:"Savoury",         description:"Corn tortillas folded around seasoned meat and fresh toppings" },
+    { word:"PASTA", country:"Italy",         type:"Savoury",         description:"Boiled wheat dough in countless shapes, served with sauce" },
+    { word:"CREPE", country:"France",        type:"Sweet / Savoury", description:"Delicate paper-thin pancake, served sweet or savoury" },
+    { word:"RAMEN", country:"Japan",         type:"Savoury",         description:"Rich pork or chicken broth noodle soup loaded with egg and toppings" },
+    { word:"CURRY", country:"India",         type:"Spicy",           description:"Aromatic slow-cooked sauce with warming spices, meat or vegetables" },
+    { word:"TAPAS", country:"Spain",         type:"Savoury",         description:"An assortment of small shared plates from Spanish culinary tradition" },
+    { word:"GYOZA", country:"Japan",         type:"Savoury",         description:"Crispy pan-fried dumplings with a juicy pork and cabbage filling" },
+    { word:"SATAY", country:"Malaysia",      type:"Savoury",         description:"Grilled skewered meat served alongside a rich peanut dipping sauce" },
+    { word:"LAKSA", country:"Malaysia",      type:"Spicy",           description:"Fiery coconut milk noodle soup with seafood or chicken" },
+    { word:"MOCHI", country:"Japan",         type:"Sweet",           description:"Soft, chewy pounded rice cake often filled with sweet bean paste" },
+    { word:"KEBAB", country:"Turkey",        type:"Savoury",         description:"Seasoned minced or cubed meat grilled on a skewer over open flame" },
+    { word:"PILAF", country:"Middle East",   type:"Savoury",         description:"Fluffy aromatic rice cooked in spiced broth with onions and herbs" },
+    { word:"SCONE", country:"UK",            type:"Sweet",           description:"Crumbly baked quick bread, served with clotted cream and jam" },
+    { word:"BAGEL", country:"USA",           type:"Savoury",         description:"Chewy ring-shaped bread, boiled then baked, often topped with seeds" },
+    { word:"DONUT", country:"USA",           type:"Sweet",           description:"Deep-fried dough ring, glazed or dusted with sugar" },
+    { word:"FUDGE", country:"USA",           type:"Sweet",           description:"Dense, intensely sweet confection made from butter, sugar and cream" },
+    { word:"PENNE", country:"Italy",         type:"Savoury",         description:"Short tube-shaped pasta with diagonal cut ends, holds sauce beautifully" },
+    { word:"BENTO", country:"Japan",         type:"Savoury",         description:"Portioned compartment box filled with rice, protein and vegetables" },
+    { word:"PESTO", country:"Italy",         type:"Savoury",         description:"Fresh basil blended with pine nuts, parmesan and olive oil" },
+    { word:"TIKKA", country:"India",         type:"Spicy",           description:"Marinated meat or paneer charred in a clay tandoor oven" },
+    { word:"RAITA", country:"India",         type:"Savoury",         description:"Cooling yoghurt dip mixed with cucumber, herbs and spices" },
+    { word:"LASSI", country:"India",         type:"Sweet",           description:"Refreshing yoghurt drink blended with fruit or spices" },
+    { word:"KHEER", country:"India",         type:"Sweet",           description:"Creamy slow-cooked rice pudding flavoured with cardamom and saffron" },
+    { word:"POORI", country:"India",         type:"Savoury",         description:"Deep-fried puffed wheat bread, eaten with curry or chutney" },
+    { word:"CHAAT", country:"India",         type:"Spicy",           description:"Tangy, spicy street food snack topped with chutneys and yoghurt" },
+    { word:"ADOBO", country:"Philippines",   type:"Savoury",         description:"Meat slowly braised in vinegar, soy sauce, garlic and bay leaves" },
+    { word:"SISIG", country:"Philippines",   type:"Savoury",         description:"Sizzling chopped pork seasoned with citrus, chilli and onion" },
+    { word:"KOFTA", country:"Middle East",   type:"Savoury",         description:"Spiced minced meat moulded around a skewer and grilled" },
+    { word:"DOLMA", country:"Turkey",        type:"Savoury",         description:"Vine leaves or vegetables stuffed with spiced rice and minced meat" },
+    { word:"BOREK", country:"Turkey",        type:"Savoury",         description:"Crispy filo pastry rolls filled with cheese, spinach or meat" },
+    { word:"BLINI", country:"Russia",        type:"Savoury",         description:"Small buckwheat pancakes topped with sour cream and caviar" },
+    { word:"KASHA", country:"Russia",        type:"Savoury",         description:"Toasted buckwheat groats cooked into a hearty grain porridge" },
+    { word:"BIGOS", country:"Poland",        type:"Savoury",         description:"Slow-cooked hunter's stew of sauerkraut, pork and wild mushrooms" },
+    { word:"KNISH", country:"Jewish",        type:"Savoury",         description:"Baked or fried dough pockets stuffed with potato or meat filling" },
+    { word:"LATKE", country:"Jewish",        type:"Savoury",         description:"Crispy pan-fried potato pancakes, served with sour cream" },
+    { word:"KULFI", country:"India",         type:"Sweet",           description:"Dense slow-frozen ice cream flavoured with cardamom and pistachio" },
+    { word:"HALWA", country:"India",         type:"Sweet",           description:"Soft, sweet semolina or carrot confection slowly cooked in ghee" },
+    { word:"LOKUM", country:"Turkey",        type:"Sweet",           description:"Soft, starchy sweet dusted in icing sugar — known as Turkish delight" },
+    { word:"TARTE", country:"France",        type:"Sweet",           description:"Open pastry shell baked with a sweet or fruit filling" },
+    { word:"TORTE", country:"Germany",       type:"Sweet",           description:"Dense, rich layered cake made with ground nuts and whipped cream" },
+    { word:"WURST", country:"Germany",       type:"Savoury",         description:"Seasoned pork sausage, grilled or poached, served with mustard" },
+    { word:"ROSTI", country:"Switzerland",   type:"Savoury",         description:"Crispy pan-fried shredded potato cake, golden and crunchy outside" },
+    { word:"CHILI", country:"USA",           type:"Spicy",           description:"Slow-simmered spiced beef and bean stew, heavy on chilli peppers" },
+    { word:"GRITS", country:"USA",           type:"Savoury",         description:"Creamy slow-cooked ground corn porridge, a Southern staple" },
+    { word:"GUMBO", country:"USA",           type:"Savoury",         description:"Thick Louisianan stew of meat, shellfish and okra served over rice" },
+    { word:"ELOTE", country:"Mexico",        type:"Savoury",         description:"Grilled corn on the cob slathered with mayonnaise, cheese and chilli" },
+    { word:"ATOLE", country:"Mexico",        type:"Sweet",           description:"Warm, thick corn-based drink flavoured with cinnamon and vanilla" },
+    { word:"AREPA", country:"Colombia",      type:"Savoury",         description:"Grilled or fried corn cake, eaten plain or stuffed with fillings" },
+    { word:"KATSU", country:"Japan",         type:"Savoury",         description:"Panko-crumbed and deep-fried pork or chicken cutlet" },
+    { word:"THALI", country:"India",         type:"Savoury",         description:"A complete Indian meal served on a round tray with curries, rice and bread" },
+    { word:"NATTO", country:"Japan",         type:"Savoury",         description:"Fermented soybeans with a pungent aroma and a distinctly sticky texture" },
+    { word:"UGALI", country:"Kenya",         type:"Savoury",         description:"Stiff maize flour porridge, the staple starch of East Africa" },
+    { word:"EGUSI", country:"Nigeria",       type:"Savoury",         description:"Thick, hearty soup made from ground melon seeds and leafy greens" },
+    { word:"MANDU", country:"Korea",         type:"Savoury",         description:"Korean dumplings filled with pork and tofu, steamed or pan-fried" },
+    { word:"GALBI", country:"Korea",         type:"Savoury",         description:"Marinated beef short ribs grilled over glowing charcoal" },
+    { word:"KIBBE", country:"Lebanon",       type:"Savoury",         description:"Ground lamb and bulgur wheat mixed with spices, baked or fried" },
+    { word:"CRUDO", country:"Italy",         type:"Savoury",         description:"Thinly sliced raw fish dressed simply with olive oil and citrus" },
+    { word:"TAFFY", country:"USA",           type:"Sweet",           description:"Chewy pulled sugar candy, stretched until silky and smooth" },
+    { word:"BURFI", country:"India",         type:"Sweet",           description:"Soft, dense milk fudge square flavoured with nuts and cardamom" },
+    { word:"LADOO", country:"India",         type:"Sweet",           description:"Round crumbly sweet ball made from chickpea flour or semolina" },
+    { word:"MODAK", country:"India",         type:"Sweet",           description:"Steamed rice dumpling filled with sweet coconut and jaggery" },
+    { word:"FARRO", country:"Italy",         type:"Savoury",         description:"Nutty ancient wheat grain served warm as a salad or risotto-style" },
+    { word:"CALDO", country:"Mexico",        type:"Savoury",         description:"Clear, light broth-based soup with vegetables and slow-cooked meat" },
+    { word:"CHIPS", country:"UK",            type:"Savoury",         description:"Thick-cut potato wedges, fried until golden and crispy outside" },
+    { word:"GNUDI", country:"Italy",         type:"Savoury",         description:"Pillowy ricotta dumplings, softer and lighter than gnocchi" },
+    { word:"TATIN", country:"France",        type:"Sweet",           description:"Upside-down caramelised apple tart, baked golden in the pan" },
+    { word:"BAOZI", country:"China",         type:"Savoury",         description:"Soft steamed buns filled with seasoned pork or vegetables" },
+    { word:"QUESO", country:"Mexico",        type:"Savoury",         description:"Warm, smooth melted cheese dip served with tortilla chips" },
+    { word:"MANTI", country:"Turkey",        type:"Savoury",         description:"Tiny hand-folded dumplings topped with garlicky yoghurt and chilli butter" },
+    { word:"KABSA", country:"Saudi Arabia",  type:"Savoury",         description:"Fragrant spiced rice cooked with meat — the national dish of Saudi Arabia" },
+    { word:"PAPAD", country:"India",         type:"Savoury",         description:"Thin, crispy sun-dried lentil wafer, served as a snack or side" },
+    { word:"MEZES", country:"Greece",        type:"Savoury",         description:"A spread of small Mediterranean appetiser dishes shared at the table" },
+    { word:"JAMON", country:"Spain",         type:"Savoury",         description:"Slow-aged dry-cured Iberian ham with rich, nutty depth of flavour" },
+    { word:"SANDO", country:"Japan",         type:"Savoury",         description:"Thick Japanese sandwich made with soft milk bread and a generous filling" },
+    { word:"NACHO", country:"Mexico",        type:"Savoury",         description:"A tortilla chip loaded with melted cheese, jalapeños and fresh salsa" },
+    { word:"GYROS", country:"Greece",        type:"Savoury",         description:"Spit-roasted meat shaved thin and wrapped in pita with tzatziki" },
+    { word:"LEFSE", country:"Norway",        type:"Sweet",           description:"Soft, thin potato flatbread rolled with butter and cinnamon sugar" },
+    { word:"PASTY", country:"UK",            type:"Savoury",         description:"Crimped shortcrust pastry parcel filled with beef, potato and swede" },
+    { word:"BOXTY", country:"Ireland",       type:"Savoury",         description:"Traditional Irish potato pancake, pan-fried until golden" },
+    { word:"PELAU", country:"Trinidad",      type:"Savoury",         description:"One-pot caramelised rice cooked with chicken and coconut milk" },
+    { word:"CAUSA", country:"Peru",          type:"Savoury",         description:"Chilled layered potato terrine filled with tuna or chicken" },
+    { word:"CHIPA", country:"Paraguay",      type:"Savoury",         description:"Crispy cheese-stuffed bread ring made from cassava flour" },
+    { word:"SPECK", country:"Italy",         type:"Savoury",         description:"Lightly smoked, dry-cured ham with a firm texture and rich flavour" },
+    { word:"SALMI", country:"Italy",         type:"Savoury",         description:"Slowly braised game meat in a rich wine and herb sauce" },
+    { word:"STEAK", country:"Global",        type:"Savoury",         description:"Thick cut of beef, grilled or pan-seared to preference" },
+    { word:"SALSA", country:"Mexico",        type:"Savoury",         description:"Fresh tomato, chilli and herb sauce served as a dip or condiment" },
+    { word:"CHANA", country:"India",         type:"Spicy",           description:"Boldly spiced chickpea curry with tomatoes, cumin and coriander" },
+    { word:"KATHI", country:"India",         type:"Savoury",         description:"Spiced meat or paneer wrapped tightly in a crispy layered flatbread" },
+    { word:"PILAU", country:"Kenya",         type:"Savoury",         description:"Spiced East African rice dish cooked in broth with whole aromatics" },
+    { word:"TUILE", country:"France",        type:"Sweet",           description:"Paper-thin crispy wafer biscuit, often shaped over a curved mould" },
+    { word:"MATZO", country:"Jewish",        type:"Savoury",         description:"Unleavened cracker bread eaten during Passover, plain and crispy" },
+    { word:"SIMIT", country:"Turkey",        type:"Savoury",         description:"Circular sesame-crusted bread ring, a popular Turkish street food" },
+    { word:"CHOUX", country:"France",        type:"Sweet",           description:"Light hollow pastry made from cooked dough, piped and baked until crisp" },
+    { word:"MAAFE", country:"Senegal",       type:"Savoury",         description:"Rich, hearty peanut-based stew with meat, a West African staple" },
+    { word:"SOPES", country:"Mexico",        type:"Savoury",         description:"Thick fried corn cakes with a pinched rim, topped with beans and salsa" },
+    { word:"CEVAP", country:"Bosnia",        type:"Savoury",         description:"Grilled minced meat sausages served with flatbread and raw onion" },
+    { word:"ANZAC", country:"Australia",     type:"Sweet",           description:"Chewy oat biscuit made with coconut and golden syrup" },
+    { word:"INARI", country:"Japan",         type:"Savoury",         description:"Vinegared rice stuffed into sweet, golden deep-fried tofu pockets" },
+    // Everyday foods, ingredients & broader food words
+    { word:"CANDY", country:"USA",            type:"Sweet",           description:"Brightly coloured sugar confection in countless shapes and flavours" },
+    { word:"LEMON", country:"Global",         type:"Sweet",           description:"Bright yellow citrus fruit with intensely tart juice and fragrant zest" },
+    { word:"MANGO", country:"India",          type:"Sweet",           description:"Tropical stone fruit with sweet, fibrous orange flesh and rich aroma" },
+    { word:"GUAVA", country:"Global",         type:"Sweet",           description:"Tropical fruit with soft pink flesh and a musky, floral sweetness" },
+    { word:"PEACH", country:"China",          type:"Sweet",           description:"Fuzzy-skinned stone fruit with sweet, juicy golden flesh" },
+    { word:"MELON", country:"Global",         type:"Sweet",           description:"Large, round fruit with refreshing watery flesh, eaten chilled" },
+    { word:"APPLE", country:"Global",         type:"Sweet",           description:"Crisp, round fruit in countless varieties from tart to honeyed sweet" },
+    { word:"DATES", country:"Middle East",    type:"Sweet",           description:"Soft, intensely sweet dried fruit from the date palm tree" },
+    { word:"PRUNE", country:"Global",         type:"Sweet",           description:"Dried plum with a deep, jammy sweetness and soft, sticky texture" },
+    { word:"COCOA", country:"South America",  type:"Sweet",           description:"Roasted and ground cacao bean powder — the base of all chocolate" },
+    { word:"MAPLE", country:"Canada",         type:"Sweet",           description:"Amber syrup tapped from maple trees, rich with caramel warmth" },
+    { word:"HONEY", country:"Global",         type:"Sweet",           description:"Golden nectar made by bees from flower pollen, endlessly fragrant" },
+    { word:"WAFER", country:"Global",         type:"Sweet",           description:"Ultra-thin, crisp biscuit sheet used in confectionery and desserts" },
+    { word:"CREAM", country:"Global",         type:"Sweet",           description:"Rich, thick dairy from skimmed milk fat, whipped or poured freely" },
+    { word:"BREAD", country:"Global",         type:"Savoury",         description:"Baked staple of flour, water and yeast — the foundation of most cuisines" },
+    { word:"TOAST", country:"Global",         type:"Savoury",         description:"Bread grilled or toasted until golden and crisp on the outside" },
+    { word:"GRAVY", country:"UK",             type:"Savoury",         description:"Rich, glossy sauce made from meat juices and stock, poured over a roast" },
+    { word:"SALAD", country:"Global",         type:"Savoury",         description:"A mix of raw or cooked ingredients dressed simply with oil and acid" },
+    { word:"PRAWN", country:"Global",         type:"Savoury",         description:"Sweet, tender shellfish grilled, fried or tossed through pasta or rice" },
+    { word:"SQUID", country:"Global",         type:"Savoury",         description:"Tender cephalopod, grilled whole or battered and fried as calamari" },
+    { word:"TROUT", country:"Global",         type:"Savoury",         description:"Delicate freshwater fish, pan-fried or smoked with lemon and herbs" },
+    { word:"CLAMS", country:"Global",         type:"Savoury",         description:"Briny bivalves steamed open in white wine and garlic butter" },
+    { word:"OLIVE", country:"Mediterranean",  type:"Savoury",         description:"Small, cured stone fruit — eaten whole or pressed into golden oil" },
+    { word:"ONION", country:"Global",         type:"Savoury",         description:"Pungent bulb vegetable that sweetens and mellows beautifully when cooked" },
+    { word:"BASIL", country:"Italy",          type:"Savoury",         description:"Fragrant summer herb with soft green leaves and a sweet, peppery bite" },
+    { word:"THYME", country:"Global",         type:"Savoury",         description:"Woody aromatic herb used to season roasts, stews and sauces" },
+    { word:"CAPER", country:"Mediterranean",  type:"Savoury",         description:"Tiny pickled flower bud with a pungent, briny and tangy punch" },
+    { word:"SUMAC", country:"Middle East",    type:"Savoury",         description:"Crimson-red spice ground from dried berries, sharp and lemony" },
+    { word:"CUMIN", country:"Global",         type:"Spicy",           description:"Warm, earthy spice with a smoky edge, essential to curries and stews" },
+    { word:"BACON", country:"Global",         type:"Savoury",         description:"Salt-cured and smoked pork belly, crisped in a pan until golden" },
+    { word:"TRIPE", country:"Global",         type:"Savoury",         description:"Slow-cooked stomach lining with a chewy texture and rich, earthy depth" },
+    { word:"ROAST", country:"Global",         type:"Savoury",         description:"Large cut of meat slow-cooked in an oven until tender and golden" },
+    { word:"BROTH", country:"Global",         type:"Savoury",         description:"Clear, flavourful liquid simmered from bones, meat and aromatics" },
+    { word:"TORTA", country:"Mexico",         type:"Savoury",         description:"Hearty Mexican sandwich on a crusty roll, packed with meat and toppings" },
+    { word:"PANKO", country:"Japan",          type:"Savoury",         description:"Light, airy Japanese breadcrumbs that fry up extra crisp and golden" },
+    { word:"QUAIL", country:"Global",         type:"Savoury",         description:"Small game bird with delicate, tender meat — often roasted or grilled" },
+    { word:"CAPON", country:"France",         type:"Savoury",         description:"Fattened rooster with rich, tender meat, a French festive centrepiece" },
+];
+
+const WORD_SET = new Set(DISHES.map(d => d.word));
+const PRIORITY = { green: 3, yellow: 2, grey: 1 };
+const MAX      = 5;
+const KB_ROWS  = [
+    ['Q','W','E','R','T','Y','U','I','O','P'],
+    ['A','S','D','F','G','H','J','K','L'],
+    ['Z','X','C','V','B','N','M']
+];
+
+let answer    = null;
+let attempts  = 0;
+let gameOver  = false;
+let started   = false;
+let letterMap = {};
+let errTimer  = null;
+
+/* MODAL */
+function handlePlayBtn() {
+    document.getElementById('modal-overlay').style.display = 'none';
+    if (!started) {
+        started = true;
+        newGame();
+    }
+}
+
+function openModal() {
+    document.getElementById('modal-overlay').style.display = 'flex';
+    document.getElementById('play-btn').textContent = 'Got It \u2192';
+}
+
+/* GAME INIT */
+function newGame() {
+    answer    = DISHES[Math.floor(Math.random() * DISHES.length)];
+    attempts  = 0;
+    gameOver  = false;
+    letterMap = {};
+
+    document.getElementById('guesses-area').innerHTML   = '';
+    document.getElementById('hints-area').innerHTML     = '';
+    document.getElementById('result-area').innerHTML    = '';
+    document.getElementById('error-msg').textContent    = '';
+    document.getElementById('guess-input').value        = '';
+    document.getElementById('input-area').style.display = 'flex';
+
+    for (let i = 0; i < MAX; i++) {
+        document.getElementById('pip-' + i).className = 'pip';
+    }
+
+    buildKeyboard();
+    setTimeout(function() { document.getElementById('guess-input').focus(); }, 60);
+}
+
+/* KEYBOARD */
+function buildKeyboard() {
+    ['kr1','kr2','kr3'].forEach(function(id, i) {
+        var el = document.getElementById(id);
+        el.innerHTML = '';
+        KB_ROWS[i].forEach(function(l) {
+            var k = document.createElement('div');
+            k.className   = 'key';
+            k.id          = 'k-' + l;
+            k.textContent = l;
+            el.appendChild(k);
+        });
+    });
+}
+
+function syncKeyboard() {
+    Object.keys(letterMap).forEach(function(l) {
+        var k = document.getElementById('k-' + l);
+        if (k) k.className = 'key ' + letterMap[l];
+    });
+}
+
+/* WORDLE COLOUR LOGIC */
+function getColours(guess, answerWord) {
+    var n       = guess.length;
+    var result  = new Array(n).fill('grey');
+    var ansArr  = answerWord.split('');
+    var ansUsed = new Array(answerWord.length).fill(false);
+    var gUsed   = new Array(n).fill(false);
+
+    // Pass 1: greens
+    for (var i = 0; i < n; i++) {
+        if (i < answerWord.length && guess[i] === ansArr[i]) {
+            result[i]  = 'green';
+            ansUsed[i] = true;
+            gUsed[i]   = true;
+        }
+    }
+    // Pass 2: yellows
+    for (var i = 0; i < n; i++) {
+        if (gUsed[i]) continue;
+        for (var j = 0; j < answerWord.length; j++) {
+            if (!ansUsed[j] && guess[i] === ansArr[j]) {
+                result[i]  = 'yellow';
+                ansUsed[j] = true;
+                break;
+            }
+        }
+    }
+    return result;
+}
+
+/* RENDER ROW */
+function renderRow(guess, colours) {
+    var area = document.getElementById('guesses-area');
+    var row  = document.createElement('div');
+    row.className = 'guess-row';
+
+    guess.split('').forEach(function(letter, i) {
+        var tile = document.createElement('div');
+        tile.className              = 'tile ' + colours[i];
+        tile.textContent            = letter;
+        tile.style.animationDelay   = (i * 70) + 'ms';
+        row.appendChild(tile);
+    });
+
+    area.appendChild(row);
+    return row;
+}
+
+/* HINTS */
+function renderHints() {
+    if (attempts === 0) {
+        document.getElementById('hints-area').innerHTML = '';
+        return;
+    }
+    var d    = answer;
+    var html = '<div class="hint-card">';
+
+    // Type is the first hint (after miss 1)
+    html += '<div class="hint-row"><span class="hint-key">Type</span><span class="hint-val">' + d.type + '</span></div>';
+
+    if (attempts >= 2) {
+        html += '<div class="hint-divider"></div>';
+        html += '<div class="hint-row"><span class="hint-key">Origin</span><span class="hint-val">' + d.country + '</span></div>';
+    }
+
+    if (attempts >= 3) {
+        html += '<div class="hint-divider"></div>';
+        html += '<div class="hint-row"><span class="hint-key">About</span><span class="hint-val">' + d.description + '</span></div>';
+    }
+
+    html += '</div>';
+    document.getElementById('hints-area').innerHTML = html;
+}
+
+/* PIPS */
+function updatePips(isCorrect) {
+    for (var i = 0; i < attempts; i++) {
+        var pip = document.getElementById('pip-' + i);
+        if (i === attempts - 1 && isCorrect) {
+            pip.classList.add('correct');
+        } else {
+            pip.classList.add('used');
+        }
+    }
+}
+
+/* ERROR */
+function showErr(msg) {
+    var el = document.getElementById('error-msg');
+    el.textContent = msg;
+    clearTimeout(errTimer);
+    errTimer = setTimeout(function() { el.textContent = ''; }, 2800);
+}
+
+/* RESULT */
+function showResult(won) {
+    document.getElementById('input-area').style.display = 'none';
+    var attText = attempts === 1 ? '1 attempt' : attempts + ' attempts';
+    var html;
+
+    if (won) {
+        html  = '<div class="result-card">';
+        html += '<div class="result-emoji">&#127829;</div>';
+        html += '<p class="result-title">Nicely done!</p>';
+        html += '<p class="result-sub">You got it in ' + attText + '</p>';
+        html += '<p class="result-answer">' + answer.word + '</p>';
+        html += '<button class="again-btn" onclick="resetAndPlay()">Play Again</button>';
+        html += '</div>';
+    } else {
+        html  = '<div class="result-card">';
+        html += '<div class="result-emoji">&#128517;</div>';
+        html += '<p class="result-title">Not this time!</p>';
+        html += '<p class="result-sub">The dish was</p>';
+        html += '<p class="result-answer">' + answer.word + '</p>';
+        html += '<p class="result-sub" style="margin-top:-0.8rem;margin-bottom:1.5rem;">' + answer.country + ' &nbsp;&middot;&nbsp; ' + answer.type + '</p>';
+        html += '<button class="again-btn" onclick="resetAndPlay()">Play Again</button>';
+        html += '</div>';
+    }
+
+    document.getElementById('result-area').innerHTML = html;
+}
+
+function resetAndPlay() {
+    started = true;
+    newGame();
+}
+
+/* GIVE UP */
+function giveUp() {
+    if (gameOver) return;
+    gameOver = true;
+    showResult(false);
+}
+
+/* SUBMIT */
+function submitGuess() {
+    if (gameOver) return;
+
+    var input = document.getElementById('guess-input');
+    var raw   = input.value.trim().toUpperCase().replace(/[^A-Z]/g, '');
+
+    if (!raw) {
+        showErr('Please type a dish name.');
+        return;
+    }
+
+    if (!WORD_SET.has(raw)) {
+        showErr("That dish isn't in our list \u2014 try another!");
+        var row = document.getElementById('input-row');
+        row.classList.remove('shake-anim');
+        void row.offsetWidth;
+        row.classList.add('shake-anim');
+        setTimeout(function() { row.classList.remove('shake-anim'); }, 450);
+        return;
+    }
+
+    attempts++;
+    input.value = '';
+
+    var colours   = getColours(raw, answer.word);
+    var isCorrect = (raw === answer.word);
+    var guessRow  = renderRow(raw, colours);
+
+    // Update letter tracker
+    raw.split('').forEach(function(l, i) {
+        var c = colours[i];
+        if (!letterMap[l] || PRIORITY[c] > PRIORITY[letterMap[l]]) {
+            letterMap[l] = c;
+        }
+    });
+    syncKeyboard();
+    updatePips(isCorrect);
+
+    var tileDelay = raw.length * 70 + 220;
+
+    if (isCorrect) {
+        gameOver = true;
+        setTimeout(function() {
+            Array.from(guessRow.children).forEach(function(tile, i) {
+                setTimeout(function() {
+                    tile.style.animation = 'bounce 0.55s ease-out';
+                }, i * 80);
+            });
+        }, tileDelay);
+        setTimeout(function() { showResult(true); }, tileDelay + 700);
+
+    } else if (attempts >= MAX) {
+        gameOver = true;
+        renderHints();
+        setTimeout(function() { showResult(false); }, tileDelay + 300);
+
+    } else {
+        renderHints();
+        setTimeout(function() { input.focus(); }, 80);
+    }
+}
+
+/* ENTER KEY */
+document.getElementById('guess-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') submitGuess();
+});
+</script>
+</body>
+</html>
